@@ -4,4 +4,4 @@ dev:
 	docker-compose up --build
 
 health:
-	curl http://localhost:8000/healthz
+        curl http://localhost:8000/api/healthz
