@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "festserve-api"
+version = "0.1.0"
+description = "FestServe backend API"
+authors = ["Ayush Rahangdale <ayushrahangdale1610@gmail.com>"]
+
+# ↓ ALL packages (prod + dev) go here until you need a second group
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = "^0.100.0"
+uvicorn = {extras = ["standard"], version = "^0.23.0"}
+sqlalchemy = "^2.0"
+psycopg2-binary = "^2.9"
+alembic = "^1.11"
+python-dotenv = "^1.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0"
+black  = "^23.9.1"
+ruff   = "^0.4.4"
+mypy   = "^1.5.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
