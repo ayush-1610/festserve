@@ -109,7 +109,7 @@ class ReportingSnapshot(Base):
 
 # Alembic env.py snippet to include metadata
 # in alembic/env.py:
-# from backend.src.festfeed_api.models import Base
+# from backend.src.festserve_api.models import Base
 # target_metadata = Base.metadata
 
 # Initial migration (CLI)
