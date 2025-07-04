@@ -2,6 +2,8 @@ import os
 import sys
 from logging.config import fileConfig
 
+DATABASE_URL = os.getenv("DATABASE_URL")
+
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
@@ -16,6 +18,8 @@ print("Base metadata tables:", Base.metadata.tables)
 
 # Alembic Config object
 config = context.config
+if DATABASE_URL:
+    config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
 # Set up Python logging using .ini file
 fileConfig(config.config_file_name)
