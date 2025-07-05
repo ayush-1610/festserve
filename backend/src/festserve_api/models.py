@@ -8,6 +8,8 @@ import uuid
 from sqlalchemy import (
     Column, String, Integer, Date, DateTime, Float, Enum, ForeignKey, text, UniqueConstraint
 )
+from passlib.context import CryptContext
+
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -25,6 +27,8 @@ class Advertiser(Base):
     advertiser_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
     contact_email = Column(String, nullable=False)
+    password_hash = Column(String, nullable=False)     # ← new
+
     created_at = Column(DateTime, nullable=False, server_default=text('now()'))
     campaigns = relationship('Campaign', back_populates='advertiser')
 
