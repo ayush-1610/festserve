@@ -6,21 +6,19 @@ import os
 import sys
 from logging.config import fileConfig
 
-DATABASE_URL = os.getenv("DATABASE_URL")
-
-from sqlalchemy import engine_from_config, pool
+from sqlalchemy import create_engine, pool
 from alembic import context
 from festserve_api.database import DATABASE_URL
 
 
 # Add backend/src to the path so ``from festserve_api.models import Base`` works
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)
 
-#from festserve_api.models import Base
+# from festserve_api.models import Base
 from festserve_api.database import Base
 
-
-print("Base metadata tables:", Base.metadata.tables)
 
 # Alembic Config object, provides access to values within the .ini file.
 config = context.config
@@ -32,6 +30,7 @@ fileConfig(config.config_file_name)
 
 # Metadata for 'autogenerate' support.
 target_metadata = Base.metadata
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
@@ -51,9 +50,8 @@ def run_migrations_offline() -> None:
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
 
-    connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
-        prefix="sqlalchemy.",
+    connectable = create_engine(
+        DATABASE_URL,
         poolclass=pool.NullPool,
     )
 
@@ -68,4 +66,3 @@ if context.is_offline_mode():
     run_migrations_offline()
 else:
     run_migrations_online()
-

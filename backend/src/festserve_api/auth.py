@@ -12,7 +12,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from festserve_api import models
-from festserve_api.database import get_db, Base
+from festserve_api.database import get_db
 
 
 # Secret key for JWT. In production, set via environment variable.
@@ -27,6 +27,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 
 # Utility functions
 
+
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
@@ -35,8 +36,14 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def authenticate_advertiser(db: Session, email: str, password: str) -> Optional[models.Advertiser]:
-    user = db.query(models.Advertiser).filter(models.Advertiser.contact_email == email).first()
+def authenticate_advertiser(
+    db: Session, email: str, password: str
+) -> Optional[models.Advertiser]:
+    user = (
+        db.query(models.Advertiser)
+        .filter(models.Advertiser.contact_email == email)
+        .first()
+    )
     if not user:
         return None
     if not verify_password(password, user.password_hash):
@@ -44,8 +51,14 @@ def authenticate_advertiser(db: Session, email: str, password: str) -> Optional[
     return user
 
 
-def authenticate_scanner(db: Session, username: str, password: str) -> Optional[models.ScannerUser]:
-    user = db.query(models.ScannerUser).filter(models.ScannerUser.username == username).first()
+def authenticate_scanner(
+    db: Session, username: str, password: str
+) -> Optional[models.ScannerUser]:
+    user = (
+        db.query(models.ScannerUser)
+        .filter(models.ScannerUser.username == username)
+        .first()
+    )
     if not user:
         return None
     if not verify_password(password, user.password_hash):
@@ -53,15 +66,21 @@ def authenticate_scanner(db: Session, username: str, password: str) -> Optional[
     return user
 
 
-def create_access_token(data: dict, expires_delta: Optional[datetime.timedelta] = None) -> str:
+def create_access_token(
+    data: dict, expires_delta: Optional[datetime.timedelta] = None
+) -> str:
     to_encode = data.copy()
-    expire = datetime.datetime.utcnow() + (expires_delta or datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    expire = datetime.datetime.utcnow() + (
+        expires_delta or datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    )
     to_encode.update({"exp": expire})
     token = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return token
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -77,20 +96,29 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
         raise credentials_exception
     # Choose model based on role
     if role == "advertiser":
-        user = db.query(models.Advertiser).filter(models.Advertiser.advertiser_id == user_id).first()
+        user = (
+            db.query(models.Advertiser)
+            .filter(models.Advertiser.advertiser_id == user_id)
+            .first()
+        )
     else:
-        user = db.query(models.ScannerUser).filter(models.ScannerUser.user_id == user_id).first()
+        user = (
+            db.query(models.ScannerUser)
+            .filter(models.ScannerUser.user_id == user_id)
+            .first()
+        )
     if user is None:
         raise credentials_exception
     return user
 
+
 # Auth router
 router = APIRouter(prefix="/api/auth", tags=["auth"])
 
+
 @router.post("/token")
 async def login_for_access_token(
-    form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
 ):
     # Determine whether this is an advertiser or scanner login
     # Use form_data.scopes to indicate role: e.g., ["advertiser"] or ["scanner"]
@@ -107,9 +135,13 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(
-        data={"sub": str(user.advertiser_id if role == "advertiser" else user.user_id), "role": role}
+        data={
+            "sub": str(user.advertiser_id if role == "advertiser" else user.user_id),
+            "role": role,
+        }
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
 
 @router.get("/me")
 async def read_users_me(current_user=Depends(get_current_user)):

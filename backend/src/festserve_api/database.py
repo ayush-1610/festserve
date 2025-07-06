@@ -9,8 +9,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Read the database URL from environment, with a sensible default for Docker Compose
 DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql://festserve:festserve@db:5432/festserve"
+    "DATABASE_URL", "postgresql://festserve:festserve@db:5432/festserve"
 )
 
 # Create the SQLAlchemy engine
@@ -30,6 +29,7 @@ SessionLocal = sessionmaker(
 Base = declarative_base()
 
 # Dependency for FastAPI requests
+
 
 def get_db():
     """
