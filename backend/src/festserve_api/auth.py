@@ -12,7 +12,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
 from festserve_api import models
-from festserve_api.database import get_db
+from festserve_api.database import get_db, Base
+
 
 # Secret key for JWT. In production, set via environment variable.
 SECRET_KEY = os.getenv("JWT_SECRET_KEY", "your-secret-key")

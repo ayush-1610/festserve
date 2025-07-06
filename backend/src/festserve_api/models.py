@@ -11,10 +11,15 @@ from sqlalchemy import (
 from passlib.context import CryptContext
 
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+from sqlalchemy.sql import text
 
-Base = declarative_base()
+
+# Base = declarative_base()
+
+# import the shared Base from database.py instead:
+from festserve_api.database import Base
 
 # ENUM for campaign status
 class CampaignStatus(str, enum.Enum):
@@ -58,7 +63,7 @@ class ScannerUser(Base):
     user_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     username = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    assigned_stall_id = Column(UUID(as_uuid=True), ForeignKey('stalls.stall_id'), nullable=False)
+    assigned_stall_id = Column(UUID(as_uuid=True), ForeignKey('stalls.stall_id'), nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=text('now()'))
 
     stall = relationship('Stall')

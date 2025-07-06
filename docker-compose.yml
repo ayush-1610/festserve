@@ -6,25 +6,25 @@ services:
       POSTGRES_PASSWORD: festserve
       POSTGRES_DB: festserve
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
 
   backend:
     build: ./backend
     command: uvicorn src.festserve_api.main:app --host 0.0.0.0 --port 8000
-    environment:
-      DATABASE_URL: postgresql://festserve:festserve@db:5432/festserve
     ports:
-      - '8000:8000'
+      - "8000:8000"
     depends_on:
       - db
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/healthz"]
+      # test: ["CMD", "curl", "-f", "http://localhost:8000/api/healthz"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/healthz/healthz"]
+
       interval: 10s
       timeout: 5s
       retries: 5
+    
 
 volumes:
   db_data:
-    driver: local

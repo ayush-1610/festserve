@@ -10,19 +10,22 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 from sqlalchemy import engine_from_config, pool
 from alembic import context
+from festserve_api.database import DATABASE_URL
+
 
 # Add backend/src to the path so ``from festserve_api.models import Base`` works
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
-from festserve_api.models import Base
+#from festserve_api.models import Base
+from festserve_api.database import Base
 
 
 print("Base metadata tables:", Base.metadata.tables)
 
 # Alembic Config object, provides access to values within the .ini file.
 config = context.config
-if DATABASE_URL:
-    config.set_main_option("sqlalchemy.url", DATABASE_URL)
+config.set_main_option("sqlalchemy.url", DATABASE_URL)
+
 
 # Configure Python logging via the .ini file.
 fileConfig(config.config_file_name)
