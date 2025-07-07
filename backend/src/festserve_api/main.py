@@ -10,8 +10,7 @@ import os
 app = FastAPI()
 
 # Register API routes first
-# app.include_router(health_router, prefix="/api")
-app.include_router(health_router, prefix="/api/healthz")
+app.include_router(health_router, prefix="/api")
 app.include_router(auth_router)  # ← add this line
 
 # Mount the built React app at root (this must be last)
