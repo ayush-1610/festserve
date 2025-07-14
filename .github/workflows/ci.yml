@@ -33,21 +33,33 @@ jobs:
           python-version: "3.11"
 
       - name: Install Poetry
+        working-directory: backend
         run: |
           pip install poetry
           poetry config virtualenvs.create false
 
-      - name: Install dependencies
+      - name: Install dependencies (prod only)
+        working-directory: backend
+        run: poetry install --no-root
+
+      - name: Install dependencies (dev)
+        working-directory: backend
         run: poetry install --no-root --with dev
 
-      - name: Stamp and run migrations
+      - name: Stamp migrations
+        working-directory: backend
         env:
           DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
-        run: |
-          alembic stamp head
-          alembic upgrade head
+        run: alembic stamp head
 
-      - name: Run tests
+      - name: Run migrations
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
+        run: alembic upgrade head
+
+      - name: Run backend tests
+        working-directory: backend
         env:
           DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
         run: pytest -q
