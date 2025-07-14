@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: festserve
+          POSTGRES_PASSWORD: festserve
+          POSTGRES_DB: festserve
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U festserve -d festserve"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install Poetry
+        run: |
+          pip install poetry
+          poetry config virtualenvs.create false
+
+      - name: Install dependencies
+        run: poetry install --no-root --with dev
+
+      - name: Stamp and run migrations
+        env:
+          DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
+        run: |
+          alembic stamp head
+          alembic upgrade head
+
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
+        run: pytest -q
