@@ -7,8 +7,12 @@ from festserve_api import models
 pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def create_users():
-    db: Session = SessionLocal()
+def create_users(db: Session = None):
+    if db is None:
+        db = SessionLocal()
+        close_db = True
+    else:
+        close_db = False
 
     # 1) remove any existing test data in the correct order
     from festserve_api import models
@@ -33,7 +37,8 @@ def create_users():
     db.add_all([adv, scanner])
     db.commit()
     print("Created test users")
-    db.close()
+    if close_db:
+        db.close()
 
 if __name__ == "__main__":
     create_users()
