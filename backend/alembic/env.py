@@ -15,10 +15,11 @@ from festserve_api.database import DATABASE_URL
 sys.path.insert(
     0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 )
+# Make sure all models are registered on Base.metadata:
+import festserve_api.models  # noqa
 
 # from festserve_api.models import Base
 from festserve_api.database import Base
-
 
 # Alembic Config object, provides access to values within the .ini file.
 config = context.config

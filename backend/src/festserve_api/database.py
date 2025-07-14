@@ -8,9 +8,18 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 # Read the database URL from environment, with a sensible default for Docker Compose
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql://festserve:festserve@db:5432/festserve"
+
+DEFAULT_DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql://festserve:festserve@db:5432/festserve"
 )
+# use in-memory SQLite for tests
+DATABASE_URL = (
+    "sqlite+pysqlite:///:memory:"
+    if os.getenv("TESTING")
+    else DEFAULT_DATABASE_URL
+)
+
 
 # Create the SQLAlchemy engine
 engine = create_engine(
