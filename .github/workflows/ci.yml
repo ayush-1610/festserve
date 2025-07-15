@@ -53,7 +53,7 @@ jobs:
         run: alembic stamp head
 
       - name: Run migrations
-        working-directory: backend
+        working-directory: backend/src/ 
         env:
           DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
         run: alembic upgrade head
