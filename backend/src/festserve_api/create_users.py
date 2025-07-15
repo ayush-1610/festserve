@@ -3,6 +3,7 @@ from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from festserve_api.database import SessionLocal
 from festserve_api import models
+from sqlalchemy.exc import ProgrammingError, OperationalError
 
 pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -16,12 +17,15 @@ def create_users(db: Session = None):
 
     # 1) remove any existing test data in the correct order
     from festserve_api import models
-    db.query(models.ReportingSnapshot).delete()
-    db.query(models.ScanEvent).delete()
-    db.query(models.Campaign).delete()
-    db.query(models.Advertiser).filter(models.Advertiser.contact_email == "adv@example.com").delete()
-    db.query(models.ScannerUser).filter(models.ScannerUser.username == "scanner1").delete()
-    db.commit()
+    try:
+        db.query(models.ReportingSnapshot).delete()
+        db.query(models.ScanEvent).delete()
+        db.query(models.Campaign).delete()
+        db.query(models.Advertiser).filter(models.Advertiser.contact_email == "adv@example.com").delete()
+        db.query(models.ScannerUser).filter(models.ScannerUser.username == "scanner1").delete()
+        db.commit()
+    except (ProgrammingError, OperationalError):
+        db.rollback()
 
     # 2) now re-insert
     adv = models.Advertiser(

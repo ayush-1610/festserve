@@ -45,7 +45,12 @@ class Advertiser(Base):
     contact_email = Column(String, nullable=False)
     password_hash = Column(String, nullable=False)  # ← new
 
-    created_at = Column(DateTime, nullable=False, server_default=text("now()"))
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
     campaigns = relationship("Campaign", back_populates="advertiser")
 
 
@@ -80,7 +85,12 @@ class ScannerUser(Base):
     assigned_stall_id = Column(
         UUID(as_uuid=True), ForeignKey("stalls.stall_id"), nullable=True
     )
-    created_at = Column(DateTime, nullable=False, server_default=text("now()"))
+    created_at = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.utcnow,
+        server_default=text("CURRENT_TIMESTAMP"),
+    )
 
     stall = relationship("Stall")
     scan_events = relationship("ScanEvent", back_populates="scanner")
