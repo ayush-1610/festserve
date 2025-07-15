@@ -51,10 +51,11 @@ jobs:
         run: |
           alembic stamp head
           alembic upgrade head
-          
-      
+    
       - name: Run backend tests
         working-directory: backend
         env:
           DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
+          PYTHONPATH: ./src
         run: pytest -q
+
