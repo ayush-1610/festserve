@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from festserve_api.main import app
 from festserve_api.database import Base, get_db
@@ -13,7 +14,9 @@ def _get_test_engine_url():
 
 # Create test engine and sessionmaker
 engine_test = create_engine(
-    _get_test_engine_url(), connect_args={"check_same_thread": False}
+    _get_test_engine_url(),
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
 )
 TestingSessionLocal = sessionmaker(
     autocommit=False, autoflush=False, bind=engine_test
@@ -27,11 +30,10 @@ def override_get_db():
     finally:
         db.close()
 
-app.dependency_overrides[get_db] = override_get_db
-
-# Fixture: create tables + seed test users before tests, then drop tables
+# Fixture: override dependency, create tables, seed users, then drop tables
 @pytest.fixture(scope="module", autouse=True)
 def prepare_and_seed_db():
+    app.dependency_overrides[get_db] = override_get_db
     # Create all tables
     Base.metadata.create_all(bind=engine_test)
     # Seed with test advertiser and scanner using the test DB session
@@ -40,6 +42,7 @@ def prepare_and_seed_db():
     db.close()
     yield
     Base.metadata.drop_all(bind=engine_test)
+    app.dependency_overrides.pop(get_db, None)
 
 # FastAPI test client using overridden DB
 client = TestClient(app)

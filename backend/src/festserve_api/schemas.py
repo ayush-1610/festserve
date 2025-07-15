@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from pydantic import BaseModel, UUID4
 
 class CampaignCreate(BaseModel):
@@ -41,6 +41,32 @@ class ScanEventRead(BaseModel):
     scanner_user_id: UUID4
     scanned_at: datetime
     device_fingerprint: str | None
+
+    class Config:
+        orm_mode = True
+
+
+class StallCreate(BaseModel):
+    location_name: str
+    latitude: float
+    longitude: float
+    date: date
+
+
+class StallRead(StallCreate):
+    stall_id: UUID4
+
+    class Config:
+        orm_mode = True
+
+
+class ProductCreate(BaseModel):
+    name: str
+    description: str | None = None
+
+
+class ProductRead(ProductCreate):
+    product_id: UUID4
 
     class Config:
         orm_mode = True

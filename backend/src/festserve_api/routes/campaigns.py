@@ -59,6 +59,20 @@ def list_campaigns(
     )
     return campaigns
 
+@router.get("/{campaign_id}", response_model=schemas.CampaignRead, status_code=status.HTTP_200_OK)
+def get_campaign(
+    campaign_id: UUID,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    if not hasattr(current_user, "advertiser_id"):
+        raise HTTPException(status_code=403, detail="Forbidden")
+
+    campaign = db.get(models.Campaign, campaign_id)
+    if not campaign or campaign.advertiser_id != current_user.advertiser_id:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    return campaign
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Reporting endpoints
 
