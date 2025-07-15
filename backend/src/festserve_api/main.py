@@ -8,6 +8,8 @@ from festserve_api.health import health_router
 from festserve_api.auth import router as auth_router
 from festserve_api.routes.campaigns import router as campaigns_router
 from festserve_api.routes.scan_events import router as scan_events_router
+from festserve_api.routes.stalls import router as stalls_router
+from festserve_api.routes.products import router as products_router
 from festserve_api.tasks import snapshot_all_campaigns
 
 
@@ -18,6 +20,8 @@ app = FastAPI()
 # Register API routes first
 app.include_router(health_router, prefix="/api")
 app.include_router(auth_router)
+app.include_router(stalls_router)
+app.include_router(products_router)
 app.include_router(campaigns_router)
 app.include_router(scan_events_router)
 

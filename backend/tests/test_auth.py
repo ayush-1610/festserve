@@ -2,17 +2,48 @@
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from festserve_api.main import app
 from festserve_api.create_users import create_users
+from festserve_api.database import Base, get_db
+
+# Use an in-memory SQLite database for isolation
+engine_test = create_engine(
+    "sqlite:///:memory:",
+    connect_args={"check_same_thread": False},
+    poolclass=StaticPool,
+)
+TestingSessionLocal = sessionmaker(
+    autocommit=False, autoflush=False, bind=engine_test
+)
+
+
+def override_get_db():
+    db = TestingSessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 client = TestClient(app)
 
+
 @pytest.fixture(scope="module", autouse=True)
-def seed_users():
-    # ensure test users are in the DB before any tests run
-    create_users()
+def prepare_and_seed_db():
+    """Create tables, override DB dependency, and seed test users."""
+    app.dependency_overrides[get_db] = override_get_db
+    Base.metadata.create_all(bind=engine_test)
+    db = TestingSessionLocal()
+    create_users(db)
+    db.close()
     yield
+    Base.metadata.drop_all(bind=engine_test)
+    app.dependency_overrides.pop(get_db, None)
+
 
 def test_token_and_me_flow():
     # 1) request a token for the advertiser

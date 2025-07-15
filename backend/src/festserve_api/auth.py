@@ -3,6 +3,7 @@
 
 import os
 import datetime
+import uuid
 from typing import Optional
 
 from jose import JWTError, jwt
@@ -96,15 +97,17 @@ def get_current_user(
         raise credentials_exception
     # Choose model based on role
     if role == "advertiser":
+        user_uuid = uuid.UUID(user_id)
         user = (
             db.query(models.Advertiser)
-            .filter(models.Advertiser.advertiser_id == user_id)
+            .filter(models.Advertiser.advertiser_id == user_uuid)
             .first()
         )
     else:
+        user_uuid = uuid.UUID(user_id)
         user = (
             db.query(models.ScannerUser)
-            .filter(models.ScannerUser.user_id == user_id)
+            .filter(models.ScannerUser.user_id == user_uuid)
             .first()
         )
     if user is None:
