@@ -2,19 +2,18 @@
 
 from __future__ import annotations
 
-import os
-import sys
-from logging.config import fileConfig
 
+# Add backend/src to the path so ``from festserve_api.models import Base`` works
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")
+    ),
+)
+
+from logging.config import fileConfig
 from sqlalchemy import create_engine, pool
 from alembic import context
 from festserve_api.database import DATABASE_URL
 
-
-# Add backend/src to the path so ``from festserve_api.models import Base`` works
-sys.path.insert(
-    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
-)
 # Make sure all models are registered on Base.metadata:
 import festserve_api.models  # noqa
 
