@@ -56,6 +56,6 @@ jobs:
         working-directory: backend
         env:
           DATABASE_URL: postgresql://festserve:festserve@localhost:5432/festserve
-          PYTHONPATH: ./src
+          PYTHONPATH: ${{ github.workspace }}/backend/src
         run: pytest -q
 
