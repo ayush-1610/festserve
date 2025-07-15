@@ -8,8 +8,8 @@ from logging.config import fileConfig
 
 from sqlalchemy import create_engine, pool
 from alembic import context
-# from festserve_api.database import DATABASE_URL
-from src.festserve_api.database import DATABASE_URL
+from festserve_api.database import DATABASE_URL
+
 
 # Add backend/src to the path so ``from festserve_api.models import Base`` works
 sys.path.insert(
