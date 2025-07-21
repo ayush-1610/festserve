@@ -18,7 +18,7 @@ class CampaignRead(BaseModel):
     status: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class CampaignUpdate(BaseModel):
@@ -28,7 +28,7 @@ class CampaignUpdate(BaseModel):
     status: str | None = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ScanEventCreate(BaseModel):
@@ -43,7 +43,7 @@ class ScanEventRead(BaseModel):
     device_fingerprint: str | None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class StallCreate(BaseModel):
@@ -57,7 +57,7 @@ class StallRead(StallCreate):
     stall_id: UUID4
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class ProductCreate(BaseModel):
@@ -69,7 +69,7 @@ class ProductRead(ProductCreate):
     product_id: UUID4
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class SnapshotRead(BaseModel):
     snapshot_id: UUID4
@@ -79,4 +79,4 @@ class SnapshotRead(BaseModel):
     remaining_units: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

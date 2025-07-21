@@ -150,7 +150,7 @@ def update_campaign(
         raise HTTPException(status_code=404, detail="Campaign not found")
 
     # apply any provided fields
-    for field, value in payload.dict(exclude_unset=True).items():
+    for field, value in payload.model_dump(exclude_unset=True).items():
         setattr(campaign, field, value)
 
     db.commit()

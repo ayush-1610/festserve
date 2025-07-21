@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api/products", tags=["products"])
 
 @router.post("/", response_model=schemas.ProductRead, status_code=status.HTTP_201_CREATED)
 def create_product(payload: schemas.ProductCreate, db: Session = Depends(get_db)):
-    product = models.Product(**payload.dict())
+    product = models.Product(**payload.model_dump())
     db.add(product)
     db.commit()
     db.refresh(product)
