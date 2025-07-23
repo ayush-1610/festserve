@@ -29,3 +29,12 @@ Run the following inside the `backend/` directory:
 poetry install --no-root
 poetry run pytest
 ```
+
+## Running the frontend
+Inside the `frontend/` directory install dependencies and start the dev server:
+```bash
+npm install
+npm run dev
+```
+The application will be served on `http://localhost:5173`.
+
