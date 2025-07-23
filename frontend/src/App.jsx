@@ -1,12 +1,26 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from 'react-router-dom';
+import Login from './pages/Login';
+import CampaignList from './pages/CampaignList';
 
 function App() {
+  const token = localStorage.getItem('token');
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold">FestServe Frontend</h1>
-      <p>Your PWA will live here.</p>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={token ? <CampaignList /> : <Navigate to="/login" replace />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
